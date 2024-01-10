@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         double totalTime = 0;
         for (int arId = 0; arId < arNum; ++arId) {
             double startTime = omp_get_wtime();
-            #pragma omp parallel num_threads(threadCount) shared(arrays, arId, arLen, target) default(none)
+            #pragma omp parallel num_threads(threadCount) shared(arrays, arId, arLen, target, index) default(none)
             {
                 #pragma omp for
                 for (int posArr = 0; posArr < arLen; ++posArr) {
