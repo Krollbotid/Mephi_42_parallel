@@ -13,11 +13,19 @@ int **makeArr(int rows, int columns)
     return result;
 }
 
-void fillRand(int **arrays, int rows, int columns)
+void cleanArr(int rows, int **arrays) {
+    for (int i = 0; i < rows; ++i)
+    {
+        free(arrays[i]);
+    }
+    free(arrays);
+}
+
+void fillRand(int **arrays, int rows, int columns, int addon)
 {
     for (int i = 0; i < rows; ++i)
     {
-        srand(time(NULL));
+        srand(i + addon);
         for (int j = 0; j < columns; ++j)
         {
             arrays[i][j] = rand();
@@ -56,15 +64,16 @@ int main(int argc, char **argv)
 
     // Init arrays
     int **arrays = makeArr(arNum, arLen);
-    fillRand(arrays, arNum, arLen);
 
     // Start measuring
     for (int measId = 0; measId < threadNumsLen; ++measId)
     {
+        
         int threadCount = threadsNum[measId];
         double totalTime = 0;
         for (int arId = 0; arId < arNum; ++arId)
         {
+            fillRand(arrays, arNum, arLen, arId);
             double startTime = omp_get_wtime();
             for (int d = arLen / 2; d > 0; d /= 2)
             {
@@ -89,6 +98,7 @@ int main(int argc, char **argv)
         }
         avTime[measId] = totalTime / arNum;
     }
+    cleanArr(arNum, arrays);
     printAvTime(threadsNum, avTime, threadNumsLen);
     printf("\n");
     return 0;
